@@ -1,12 +1,12 @@
-#RewriteEngine On
-#RewriteBase /~user9/REST/server/api/shop/cars/
-#RewriteCond %{REQUEST_FILENAME} !-f
-#RewriteCond %{REQUEST_FILENAME} !-d
-#RewriteRule ^.*$ index.php
-#DirectoryIndex index.php
-
-
-
 RewriteEngine On
+RewriteBase /~user9/RESTT/server/api/shop/cars/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^.*$ index.php
 DirectoryIndex index.php
+
+
+
+#RewriteEngine On
+#RewriteRule ^.*$ index.php
+#DirectoryIndex index.php
