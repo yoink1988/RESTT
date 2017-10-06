@@ -1,0 +1,6 @@
+Array
+(
+    [idedd] => 15
+    [model] => wwwwwwww
+    [color] => rozovenkiy
+)

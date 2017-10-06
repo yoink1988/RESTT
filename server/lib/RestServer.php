@@ -1,6 +1,7 @@
 <?php
 
-//include_once 'lib/config.php';
+include_once 'config.php';
+include_once 'View.php';
 class RestServer
 {
     public $args;
@@ -9,6 +10,7 @@ class RestServer
         $this->reqMethod = $_SERVER['REQUEST_METHOD'];
         $this->url = $_SERVER['REQUEST_URI'];
         $this->parseUrl();
+		$this->view = new View($this->responseType);
     }
 
     protected function parseUrl()
@@ -17,7 +19,7 @@ class RestServer
         $this->controller = ucfirst(explode('/', $tmp[1])[0]);
         $model = explode('/', $tmp[1])[1];
         $arrString = explode($model.'/', $tmp[1])[1];
-        $this->model = ucfirst($model);
+        $this->funcBody = ucfirst($model);
         if(strripos($tmp[1], '.'))
         {
             $this->responseType = array_pop(explode('.', $tmp[1]));
@@ -62,18 +64,18 @@ class RestServer
         switch($this->reqMethod)
         {
         case 'GET':
-            $this->execMethod('get'.$this->model);
+            $this->execMethod('get'.$this->funcBody);
             break;
         case 'DELETE':
-            $this->execMethod('delete'.$this->model);
+            $this->execMethod('delete'.$this->funcBody);
             break;
         case 'POST':
             $this->args = $this->getPostArgs();
-            $this->execMethod('post'.$this->model);
+            $this->execMethod('post'.$this->funcBody);
             break;
         case 'PUT':
-            $this->args = $this->getPutArgs();
-            $this->execMethod('put'.$this->model);
+            $this->getPutArgs();
+            $this->execMethod('put'.$this->funcBody);
             break;
         default:
             return false;
@@ -86,9 +88,7 @@ class RestServer
         if ( method_exists($this, $meth) )
         {
             $res = $this->$meth($this->args);
-            //endpoint
-            echo '<pre>';
-            var_dump($this);
+			$this->view->doResponse($res);
         }
         else
         {
@@ -101,17 +101,6 @@ class RestServer
     }
     protected function getPutArgs()
     {
-        $arr = [];
-        $data = file_get_contents('php://input');
-        $exploded = explode('&', $data);
-        foreach($exploded as $pair)
-        {
-            $item = explode('=', $pair);
-            if(count($item) == 2)
-            {
-                $arr[urldecode($item[0])] = urldecode($item[1]);
-            }
-        }
-        return $arr;
+        parse_str(file_get_contents("php://input"), $this->args);
     }
 }
