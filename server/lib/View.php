@@ -35,6 +35,7 @@ class View
             // todo sdelat oshibku formata
             $encoded = $this->parseToJson($data);
         }
+//		header('Access-Control-Allow-Origin: *');
         echo $encoded;
     }
     public function parseToXml($data, &$xml)

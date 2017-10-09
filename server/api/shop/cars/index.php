@@ -11,12 +11,12 @@ class CarsController extends RestServer
     {
         parent::__construct();
 		$this->model = new Car;
+
     }
 
     public function getCars($params=null)
     {
 		return $this->model->select($params);
-//		var_dump($res);
     }
     
     public function postCars($params)
@@ -27,7 +27,7 @@ class CarsController extends RestServer
 
     public function putCars($params)
     {
-//		file_put_contents('tempp.txt', print_r($params, true));
+
         if(isset($params['id']))
         {
             $id = array_shift($params);
@@ -43,7 +43,7 @@ class CarsController extends RestServer
     {
 		if(isset($params['id']))
 		{
-			$id = $params['id'];
+		$id = $params['id'];
 		$res = $this->model->delete($id);
 		echo $res;
 		}

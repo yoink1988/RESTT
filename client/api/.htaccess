@@ -1,8 +1,8 @@
 RewriteEngine On
 RewriteBase /api/
-RewriteRule (.*) http://192.168.0.15/~user9/RESTT/server/api/$1 [P]
+#RewriteRule (.*) http://192.168.0.15/~user9/RESTT/server/api/$1 [P]
 
-#RewriteRule (.*) http://localhost/public_html/RESTT/Server/api/$1 [P]
+RewriteRule (.*) http://localhost/public_html/RESTT/Server/api/$1 [P]
 
 
 

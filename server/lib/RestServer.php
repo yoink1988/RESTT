@@ -60,7 +60,6 @@ class RestServer
     }
     public function run()
     {
-
         switch($this->reqMethod)
         {
         case 'GET':
@@ -77,30 +76,50 @@ class RestServer
             $this->getPutArgs();
             $this->execMethod('put'.$this->funcBody);
             break;
+        case 'OPTIONS':
+			header('Access-Control-Allow-Methods: PUT');
+			header('Access-Control-Allow-Origin: *');
+			header('HTTP/1.0 200 OK');
+			exit();
+            break;
         default:
             return false;
         }
-        //var_dump($this); 
+ 
 
     }
     protected function execMethod($meth)
     {
+//		echo file_get_contents("php://input");
+
+		header('Access-Control-Allow-Origin: *');
+		header('Access-Control-Allow-Credentials: true');
+		file_put_contents('tempp.txt', print_r($this->args, true));
+//		exit();
+//		return $_POST;
+//		print_r($this->args);
+//		exit();
         if ( method_exists($this, $meth) )
         {
+
+
             $res = $this->$meth($this->args);
 			$this->view->doResponse($res);
         }
         else
         {
+			exit();
             throw new Exception('MEthod not found');
         }
     }
     protected function getPostArgs()
     {
+
         return $_POST;
     }
     protected function getPutArgs()
     {
-        parse_str(file_get_contents("php://input"), $this->args);
+        $this->args = json_decode(file_get_contents("php://input"), true);
+//        parse_str(file_get_contents("php://input"), $this->args);
     }
 }

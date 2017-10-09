@@ -1,11 +1,10 @@
 <?php
-
 /**
  * Description of Car
  *
  * @author yoink
  */
-class Car
+class Order
 {
 	private $db;
 	public function __construct()
@@ -13,43 +12,38 @@ class Car
 		$pdoOpts = MYSQL_HOST;
 		$user = MYSQL_USER;
 		$pass = MYSQL_PASS;
-		$this->table = 'cars';
+		$this->table = 'users';
         $this->db = new PDO($pdoOpts,$user,$pass);
 	}
 
 	public function select($params=null)
 	{
-				header('Access-Control-Allow-Origin: *');
-		$q = "select id, brand, model, year, motor, speed, color, price from $this->table";
-        if($params)
-        {
-			$params = $this->clearParams($params);
-			$q.=' where ';
-			foreach($params as $k => $v)
-			{
-				$q .="$k = $v and ";
-			}
-			$q = substr($q, 0, -5);
-        }
-
+		$q = "select id, name, login, pass, hash from $this->table ";
+		if($params['id'])
+		{
+			$id = $this->db->quote($params['id']);
+			$q .= "where id = $id";
+		}
 		$stmt = $this->db->query($q);
-			$result = [];
-			while($res = $stmt->fetch(PDO::FETCH_ASSOC))
-			{
-				$result[]=$res;
-			}
-			if(!$result)
-			{
-				throw new Exception('Not found');
-			}
-			return $result;
+		$result = [];
+		while($res = $stmt->fetch(PDO::FETCH_ASSOC))
+		{
+			$result[]=$res;
+		}
+		if(!$result)
+		{
+			throw new Exception('Not found');
+		}
+		return $result;
 	}
-
-	public function insert($params)
+	
+	public function insert($params=null)
 	{
-		$q = 'insert into cars (model, brand, year, motor, speed, color, price) values (';
-        if(count($params == 7))
+
+		$q = "insert into $this->table (name, lname, login, pass, hash) values (";
+        if(count($params == 5))
         {
+
 			$params = $this->clearParams($params);
 			foreach ($params as $param)
 			{
@@ -57,9 +51,9 @@ class Car
 			}
 			$q = substr($q, 0, -2);
 			$q.=')';
-
 			if($this->db->exec($q))
 			{
+
 				return 'success';
 			}
 			else
@@ -69,31 +63,16 @@ class Car
         }
         else
         {
+
             throw new Exception('all fields are required');
         }
 	}
-
-	public function delete($id)
-	{
-		$id = $this->db->quote($id);
-		$q = "delete from cars where id = $id limit 1";
-		if($this->db->exec($q))
-		{
-			echo 'deleted';
-		}
-		else
-		{
-			throw new Exception('ne udaleno');
-		}
-
-	}
-
 	public function update($id, $params)
 	{
 		$id = $this->db->quote($id);
 		$params = $this->clearParams($params);
 
-		$q = 'update cars set ';
+		$q = "update $this->table set ";
 		foreach($params as $k => $v)
 		{
 			$q .= "{$k} = {$v}, ";
@@ -111,7 +90,7 @@ class Car
 		}
 	}
 
-		private function clearParams($params)
+	private function clearParams($params)
 	{
 		$cleared = [];
 		foreach ($params as $k => $v)
@@ -120,4 +99,5 @@ class Car
 		}
 		return $cleared;
 	}
+
 }
